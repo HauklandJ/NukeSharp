@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <title>NukeSharp</title>
+    <script src="https://unpkg.com/htmx.org@1.9.4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.0.2/chartjs-plugin-annotation.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+</head>
+<body>
+
+    <div class="container" style="padding-top:20px">
+        <div hx-get="/pressure" hx-trigger="every 1s, load" hx-swap="innerHTML"></div>
+    </div>
+    <div style="padding-left:80px; padding-right:80px">
+        <canvas id="pressureChart" width="200" height="100"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('pressureChart').getContext('2d');
+        let pressureData = [];
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 100 }, (_, i) => i + 1),
+                datasets: [{
+                    label: 'Pressure (%) - Hover to see the value',
+                    data: pressureData,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        min: 0.2,
+                        max: 1
+                    },
+                    x: {
+                        min: 1,
+                        max: 100
+                    }
+                },
+                plugins: {
+                    annotation: {
+                        annotations: [
+                            {
+                                type: 'box',
+                                yMin: 0.5,
+                                yMax: 0.75,
+                                borderColor: 'green',
+                                backgroundColor: 'rgba(0, 128, 0, 0.3)'
+                            },
+                            {
+                                type: 'line',
+                                yMin: 0.9,
+                                yMax: 0.9,
+                                borderColor: 'red',
+                                borderWidth: 2
+                            }
+                        ]
+                    }
+                }
+            }
+        });
+        setInterval(async () => {
+            const response = await fetch('/gethistoricmeasurements');
+            const newPressureData = await response.json();
+            chart.data.datasets[0].data = newPressureData;
+            chart.update();
+        }, 1000);
+    </script>
+</body>
+
+</html>

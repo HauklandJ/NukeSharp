@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33424.131
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NukeSharp", "NukeSharp\NukeSharp.csproj", "{C6BE0374-A0B0-40D7-9815-A281E8A395D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NukeSharpTests", "NukeSharpTests\NukeSharpTests.csproj", "{C2160684-A378-46DA-8D7C-8BE4045A9E12}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C6BE0374-A0B0-40D7-9815-A281E8A395D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6BE0374-A0B0-40D7-9815-A281E8A395D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6BE0374-A0B0-40D7-9815-A281E8A395D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6BE0374-A0B0-40D7-9815-A281E8A395D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2160684-A378-46DA-8D7C-8BE4045A9E12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2160684-A378-46DA-8D7C-8BE4045A9E12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2160684-A378-46DA-8D7C-8BE4045A9E12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2160684-A378-46DA-8D7C-8BE4045A9E12}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {13108514-80AA-4AD9-A2EC-B4629BE086E8}
+	EndGlobalSection
+EndGlobal
