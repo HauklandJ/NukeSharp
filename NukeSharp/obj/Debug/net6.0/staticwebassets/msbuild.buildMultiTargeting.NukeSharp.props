@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\NukeSharp.props" />
-</Project>
