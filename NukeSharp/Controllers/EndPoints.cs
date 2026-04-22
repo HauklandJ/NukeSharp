@@ -10,23 +10,13 @@ using System;
 
 namespace NukeSharp.Controllers;
 
-public class EndPoints
+public class EndPoints(IPressureSensor pressureSensor)
 {
-    private readonly IPressureSensor _pressureSensor;
-
-    private readonly HandlebarsTemplate<object, object> _indexTemplate;
-    private readonly HandlebarsTemplate<object, object> _pressureTemplate;
+    private readonly HandlebarsTemplate<object, object> _indexTemplate = Handlebars.Compile(File.ReadAllText("static/index.html"));
+    private readonly HandlebarsTemplate<object, object> _pressureTemplate = Handlebars.Compile(File.ReadAllText("static/pressure.handlebars"));
 
 
     private readonly Queue<float> _last100Readings = new(100);
-
-    public EndPoints(IPressureSensor pressureSensor)
-    {
-        _pressureSensor = pressureSensor;
-
-        _indexTemplate = Handlebars.Compile(File.ReadAllText("static/index.html"));
-        _pressureTemplate = Handlebars.Compile(File.ReadAllText("static/pressure.handlebars"));
-    }
 
     public async Task GetIndex(HttpContext context)
     {
@@ -38,7 +28,7 @@ public class EndPoints
     public async Task GetCurrentPressure(HttpContext context)
     {
         var time = DateTime.UtcNow;
-        var pressure = _pressureSensor.GetValue();
+        var pressure = pressureSensor.GetValue();
         if (_last100Readings.Count >= 100)
         {
             _last100Readings.Dequeue();

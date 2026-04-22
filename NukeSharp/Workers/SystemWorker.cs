@@ -7,17 +7,11 @@ using NukeSharp.ControlSystem;
 
 namespace NukeSharp.Workers;
 
-internal class SystemWorker : IHostedService
+internal class SystemWorker(IReactorSystem reactorSystem, ILogger<SystemWorker> logger) : IHostedService
 {
-    private readonly IReactorSystem _reactorSystem;
+    private readonly IReactorSystem _reactorSystem = reactorSystem;
     private readonly CancellationTokenSource _shutdownTokenSource = new();
-    private readonly ILogger<SystemWorker> _logger;
-
-    public SystemWorker(IReactorSystem reactorSystem, ILogger<SystemWorker> logger)
-    {
-        _reactorSystem = reactorSystem;
-        _logger = logger;
-    }
+    private readonly ILogger<SystemWorker> _logger = logger;
     private Task _asyncReactorSystem;
 
     public Task StartAsync(CancellationToken cancellationToken)
