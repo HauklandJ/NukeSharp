@@ -2,7 +2,7 @@
 using System.Text.Json;
 using NukeSharp.Models;
 using NukeSharp.Services;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -16,7 +16,7 @@ public class EndPoints(IPressureSensor pressureSensor)
     private readonly HandlebarsTemplate<object, object> _pressureTemplate = Handlebars.Compile(File.ReadAllText("static/pressure.handlebars"));
 
 
-    private readonly Queue<float> _last100Readings = new(100);
+    private readonly ConcurrentQueue<float> _last100Readings = new();
 
     public async Task GetIndex(HttpContext context)
     {
@@ -31,7 +31,7 @@ public class EndPoints(IPressureSensor pressureSensor)
         var pressure = pressureSensor.GetValue();
         if (_last100Readings.Count >= 100)
         {
-            _last100Readings.Dequeue();
+            _last100Readings.TryDequeue(out _);
         }
         Console.WriteLine($"GetValue from controller at {time}. Current pressure: {pressure}");
         _last100Readings.Enqueue(pressure);
