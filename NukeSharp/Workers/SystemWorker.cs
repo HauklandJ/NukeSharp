@@ -16,7 +16,7 @@ internal class SystemWorker(IReactorSystem reactorSystem, ILogger<SystemWorker> 
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _shutdownTokenSource.Token);
+        CancellationTokenSource linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _shutdownTokenSource.Token);
         _asyncReactorSystem = Task.Run(
             () => _reactorSystem.Start(linkedTokenSource.Token), 
             linkedTokenSource.Token

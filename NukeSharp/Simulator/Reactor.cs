@@ -12,7 +12,7 @@ public class Reactor(IPressureSensor sensor, IValveControl valve, ILogger<Reacto
         logger.LogInformation("Started reactor");
         while (!cancellationToken.IsCancellationRequested)
         {
-            var isOpen = valve.IsOpen();
+            bool isOpen = valve.IsOpen();
             await Task.Delay(1000, cancellationToken);
             sensor.Update(isOpen);
         }

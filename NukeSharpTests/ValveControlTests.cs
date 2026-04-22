@@ -10,7 +10,7 @@ namespace NukeSharpTests
         public void Open_Is_Not_Instant()
         {
             // Arrange
-            var valve = new ValveControl();
+            ValveControl valve = new();
 
             // Act
             valve.Open();
@@ -22,7 +22,7 @@ namespace NukeSharpTests
         [Fact]
         public async Task OpenAndCloseTest()
         {
-            var valve = new ValveControl();
+            ValveControl valve = new();
 
             valve.Open();
             await Task.Delay(1000); // Wait for 1 second

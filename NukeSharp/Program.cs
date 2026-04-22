@@ -12,16 +12,16 @@ using NukeSharp.Simulator;
 using NukeSharp.Workers;
 
 
-var congifBuilder = new ConfigurationBuilder()
+IConfigurationBuilder congifBuilder = new ConfigurationBuilder()
     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
     .AddJsonFile("appsettings.json");
 
-var configuration = congifBuilder.Build();
+IConfigurationRoot configuration = congifBuilder.Build();
 
 string pressureDeviationType = configuration["PressureDeviationType"] ?? "standard";
 
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<IValveControl, ValveControl>();
 
 if (pressureDeviationType == "standard")
@@ -43,11 +43,11 @@ builder.Services.AddSingleton<IReactorSystem, ReactorSystem>();
 builder.Services.AddHostedService<SystemWorker>();
 builder.Services.AddHostedService<ReactorWorker>();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
-var pressureSensor = app.Services.GetRequiredService<IPressureSensor>();
-var logger = app.Services.GetRequiredService<ILogger<EndPoints>>();
-var endpoints = new EndPoints(pressureSensor, logger);
+IPressureSensor pressureSensor = app.Services.GetRequiredService<IPressureSensor>();
+ILogger<EndPoints> logger = app.Services.GetRequiredService<ILogger<EndPoints>>();
+EndPoints endpoints = new(pressureSensor, logger);
 
 app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "static")), RequestPath = "/static" });
 

@@ -9,10 +9,10 @@ public class PressureSensorTests
     public void GetValue_InitialValue_ReturnsInitialValue()
     {
         // Arrange
-        var sensor = new PressureSensor();
+        PressureSensor sensor = new();
 
         // Act
-        var result = sensor.GetValue();
+        float result = sensor.GetValue();
 
         // Assert
         Assert.Equal(0.3f, result);
@@ -24,11 +24,11 @@ public class PressureSensorTests
     public void Update_WithValveStatus_UpdatesPressureValue(bool isValveOpen, float expectedValue)
     {
         // Arrange
-        var sensor = new PressureSensor();
+        PressureSensor sensor = new();
 
         // Act
         sensor.Update(isValveOpen);
-        var result = sensor.GetValue();
+        float result = sensor.GetValue();
 
         // Assert
         Assert.Equal(expectedValue, result);
@@ -38,7 +38,7 @@ public class PressureSensorTests
     public void Update_InvokesPressureChangedEvent()
     {
         // Arrange
-        var mockSensor = new Mock<PressureSensor> {};
+        Mock<PressureSensor> mockSensor = new();
         float pressureChangedValue = 0f;
         mockSensor.Object.PressureChanged += (float pressure) => pressureChangedValue = pressure;
 
@@ -52,7 +52,7 @@ public class PressureSensorTests
     [Fact]
     public void Pressure_SetValueAboveOne_ValueIsCappedToOne()
     {
-        var pressureSensor = new PressureSensor
+        PressureSensor pressureSensor = new()
         {
             Pressure = 1.5f
         };

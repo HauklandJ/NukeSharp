@@ -10,10 +10,10 @@ public class ReactorSystemTests
     public void HandlePressureChange_PressureAboveThreshold_OpensValve()
     {
         // Arrange
-        var mockValveControl = new Mock<IValveControl>();
-        var mockPressureSensor = new Mock<IPressureSensor>();
-        var mockLogger = new Mock<ILogger<ReactorSystem>>();
-        var reactorSystem = new ReactorSystem(mockValveControl.Object, mockPressureSensor.Object, mockLogger.Object);
+        Mock<IValveControl> mockValveControl = new();
+        Mock<IPressureSensor> mockPressureSensor = new();
+        Mock<ILogger<ReactorSystem>> mockLogger = new();
+        ReactorSystem reactorSystem = new(mockValveControl.Object, mockPressureSensor.Object, mockLogger.Object);
 
         // Act
         mockPressureSensor.Raise(m => m.PressureChanged += null, 0.72f);
@@ -26,11 +26,11 @@ public class ReactorSystemTests
     public void HandlePressureChange_PressureBelowThreshold_ClosesValve()
     {
         // Arrange
-        var mockValveControl = new Mock<IValveControl>();
+        Mock<IValveControl> mockValveControl = new();
         mockValveControl.Setup(x => x.IsOpen()).Returns(true);
-        var mockPressureSensor = new Mock<IPressureSensor>();
-        var mockLogger = new Mock<ILogger<ReactorSystem>>();
-        var reactorSystem = new ReactorSystem(mockValveControl.Object, mockPressureSensor.Object, mockLogger.Object);
+        Mock<IPressureSensor> mockPressureSensor = new();
+        Mock<ILogger<ReactorSystem>> mockLogger = new();
+        ReactorSystem reactorSystem = new(mockValveControl.Object, mockPressureSensor.Object, mockLogger.Object);
 
         // Act
         mockPressureSensor.Raise(m => m.PressureChanged += null, 0.56f);

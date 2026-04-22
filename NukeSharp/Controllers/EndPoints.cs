@@ -21,30 +21,30 @@ public class EndPoints(IPressureSensor pressureSensor, ILogger<EndPoints> logger
 
     public async Task GetIndex(HttpContext context)
     {
-        var result = _indexTemplate(null);
+        string result = _indexTemplate(null);
         context.Response.ContentType = "text/html";
         await context.Response.WriteAsync(result);
     }
 
     public async Task GetCurrentPressure(HttpContext context)
     {
-        var time = DateTime.UtcNow;
-        var pressure = pressureSensor.GetValue();
+        DateTime time = DateTime.UtcNow;
+        float pressure = pressureSensor.GetValue();
         if (_last100Readings.Count >= 100)
         {
             _last100Readings.TryDequeue(out _);
         }
         logger.LogInformation("GetValue from controller at {time}. Current pressure: {pressure}", time, pressure);
         _last100Readings.Enqueue(pressure);
-        var p = new PressureResult { Pressure = pressure.ToString() };
+        PressureResult pressureResult = new() { Pressure = pressure.ToString() };
         context.Response.ContentType = "text/html";
-        var result = _pressureTemplate(p);
+        string result = _pressureTemplate(pressureResult);
         await context.Response.WriteAsync(result);
     }
 
     public async Task GetHistoricMeasurements(HttpContext context)
     {
-        var json = JsonSerializer.Serialize(_last100Readings.ToArray());
+        string json = JsonSerializer.Serialize(_last100Readings.ToArray());
 
         context.Response.ContentType = "application/json";
 

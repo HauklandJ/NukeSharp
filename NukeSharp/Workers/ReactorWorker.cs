@@ -13,7 +13,7 @@ internal class ReactorWorker(IReactor reactor, ILogger<ReactorWorker> logger) : 
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _shutdownTokenSource.Token);
+        CancellationTokenSource linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _shutdownTokenSource.Token);
 
         _asyncReactor = Task.Run(() => reactor.Start(linkedTokenSource.Token), linkedTokenSource.Token);
 
