@@ -7,10 +7,11 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System;
+using Microsoft.Extensions.Logging;
 
 namespace NukeSharp.Controllers;
 
-public class EndPoints(IPressureSensor pressureSensor)
+public class EndPoints(IPressureSensor pressureSensor, ILogger<EndPoints> logger)
 {
     private readonly HandlebarsTemplate<object, object> _indexTemplate = Handlebars.Compile(File.ReadAllText("static/index.html"));
     private readonly HandlebarsTemplate<object, object> _pressureTemplate = Handlebars.Compile(File.ReadAllText("static/pressure.handlebars"));
@@ -33,7 +34,7 @@ public class EndPoints(IPressureSensor pressureSensor)
         {
             _last100Readings.TryDequeue(out _);
         }
-        Console.WriteLine($"GetValue from controller at {time}. Current pressure: {pressure}");
+        logger.LogInformation($"GetValue from controller at {time}. Current pressure: {pressure}");
         _last100Readings.Enqueue(pressure);
         var p = new PressureResult { Pressure = pressure.ToString() };
         context.Response.ContentType = "text/html";
