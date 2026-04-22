@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 
 namespace NukeSharp.Services;
 
@@ -18,14 +18,20 @@ public class ValveControl : IValveControl
             _isLocked = true;
         }
 
-        Task.Run(async () =>
+        _ = Task.Run(async () =>
         {
-            await Task.Delay(2000); // 2 seconds
-            _isOpen = true;
-
-            lock (_lockObject)
+            try
             {
-                _isLocked = false;
+                await Task.Delay(2000);
+                lock (_lockObject)
+                {
+                    _isOpen = true;
+                    _isLocked = false;
+                }
+            }
+            catch
+            {
+                lock (_lockObject) { _isLocked = false; }
             }
         });
     }
@@ -40,20 +46,29 @@ public class ValveControl : IValveControl
             _isLocked = true;
         }
 
-        Task.Run(async () =>
+        _ = Task.Run(async () =>
         {
-            await Task.Delay(2000); // 2 seconds
-            _isOpen = false;
-
-            lock (_lockObject)
+            try
             {
-                _isLocked = false;
+                await Task.Delay(2000);
+                lock (_lockObject)
+                {
+                    _isOpen = false;
+                    _isLocked = false;
+                }
+            }
+            catch
+            {
+                lock (_lockObject) { _isLocked = false; }
             }
         });
     }
 
     public bool IsOpen()
     {
-        return _isOpen;
+        lock (_lockObject)
+        {
+            return _isOpen;
+        }
     }
 }
