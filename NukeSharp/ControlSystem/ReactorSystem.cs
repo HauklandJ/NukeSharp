@@ -25,7 +25,7 @@ public class ReactorSystem : IReactorSystem
 
     private void HandlePressureChange(float newPressure)
     {
-        _logger.LogInformation($"SYSTEM current value: {newPressure}");
+        _logger.LogInformation("SYSTEM current value: {newPressure}", newPressure);
         if (newPressure > MAX_PRESSURE && !_valveControl.IsOpen())
         {
             _valveControl.Open();

@@ -34,7 +34,7 @@ public class EndPoints(IPressureSensor pressureSensor, ILogger<EndPoints> logger
         {
             _last100Readings.TryDequeue(out _);
         }
-        logger.LogInformation($"GetValue from controller at {time}. Current pressure: {pressure}");
+        logger.LogInformation("GetValue from controller at {time}. Current pressure: {pressure}", time, pressure);
         _last100Readings.Enqueue(pressure);
         var p = new PressureResult { Pressure = pressure.ToString() };
         context.Response.ContentType = "text/html";
