@@ -39,11 +39,11 @@ else
 
 
 builder.Services.AddSingleton<IReactor, Reactor>();
-builder.Services.AddSingleton<IReactorSystem, ReactorSystem>();
-builder.Services.AddHostedService<SystemWorker>();
+builder.Services.AddSingleton<ReactorSystem>();
 builder.Services.AddHostedService<ReactorWorker>();
 
 WebApplication app = builder.Build();
+app.Services.GetRequiredService<ReactorSystem>();
 
 IPressureSensor pressureSensor = app.Services.GetRequiredService<IPressureSensor>();
 ILogger<EndPoints> logger = app.Services.GetRequiredService<ILogger<EndPoints>>();

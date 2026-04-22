@@ -1,11 +1,9 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using NukeSharp.Services;
 
 namespace NukeSharp.ControlSystem;
 
-public class ReactorSystem : IReactorSystem
+public class ReactorSystem
 {
     private readonly IValveControl _valveControl;
     private readonly IPressureSensor _pressureSensor;
@@ -34,12 +32,6 @@ public class ReactorSystem : IReactorSystem
         {
             _valveControl.Close();
         }
-    }
-
-    public async Task Start(CancellationToken cancellationToken)
-    {
-        _logger.LogInformation("Started ReactorSystem");
-        while (!cancellationToken.IsCancellationRequested) { }
     }
 
 }
