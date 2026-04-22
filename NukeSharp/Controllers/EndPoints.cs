@@ -1,5 +1,5 @@
 ﻿using HandlebarsDotNet;
-using Newtonsoft.Json;
+using System.Text.Json;
 using NukeSharp.Models;
 using NukeSharp.Services;
 
@@ -48,7 +48,7 @@ public class EndPoints
 
     public async Task GetHistoricMeasurements(HttpContext context)
     {
-        var json = JsonConvert.SerializeObject(_last100Readings.ToArray());
+        var json = JsonSerializer.Serialize(_last100Readings.ToArray());
 
         context.Response.ContentType = "application/json";
 
