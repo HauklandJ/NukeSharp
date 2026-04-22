@@ -1,4 +1,7 @@
-﻿namespace NukeSharp.ControlSystem;
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace NukeSharp.ControlSystem;
 
 public interface IReactorSystem
 {

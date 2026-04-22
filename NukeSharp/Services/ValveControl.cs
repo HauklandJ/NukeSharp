@@ -1,4 +1,6 @@
-﻿namespace NukeSharp.Services;
+﻿using System.Threading.Tasks;
+
+namespace NukeSharp.Services;
 
 public class ValveControl : IValveControl
 {

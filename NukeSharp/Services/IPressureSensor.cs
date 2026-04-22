@@ -1,4 +1,6 @@
-﻿namespace NukeSharp.Services;
+﻿using System;
+
+namespace NukeSharp.Services;
 
 public interface IPressureSensor
 {

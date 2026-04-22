@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using NukeSharp.Services;
 
 namespace NukeSharpTests

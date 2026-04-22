@@ -1,4 +1,7 @@
-﻿namespace NukeSharp.Simulator;
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace NukeSharp.Simulator;
 
 public interface IReactor
 {
