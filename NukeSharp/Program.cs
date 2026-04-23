@@ -3,7 +3,7 @@ using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using NukeSharp.Controllers;
+using NukeSharp;
 using NukeSharp.ControlSystem;
 using NukeSharp.Services;
 using NukeSharp.Simulator;
@@ -32,13 +32,11 @@ else
 
 builder.Services.AddSingleton<IReactor, Reactor>();
 builder.Services.AddSingleton<ReactorSystem>();
-builder.Services.AddSingleton<EndPoints>();
+builder.Services.AddSingleton<PressureHistory>();
 builder.Services.AddHostedService<ReactorWorker>();
 
 WebApplication app = builder.Build();
 app.Services.GetRequiredService<ReactorSystem>();
-
-EndPoints endpoints = app.Services.GetRequiredService<EndPoints>();
 
 app.UseStaticFiles(
     new StaticFileOptions
@@ -50,8 +48,5 @@ app.UseStaticFiles(
     }
 );
 
-app.MapGet("/", endpoints.GetIndex);
-app.MapGet("/pressure", endpoints.GetCurrentPressure);
-app.MapGet("/gethistoricmeasurements", endpoints.GetHistoricMeasurements);
-app.MapPost("/thresholds", endpoints.UpdateThresholds);
+app.MapPressureEndpoints();
 await app.RunAsync();
