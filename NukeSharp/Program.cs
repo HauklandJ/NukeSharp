@@ -10,15 +10,13 @@ using NukeSharp.Services;
 using NukeSharp.Simulator;
 using NukeSharp.Workers;
 
-
-IConfigurationBuilder congifBuilder = new ConfigurationBuilder()
+IConfigurationBuilder configBuilder = new ConfigurationBuilder()
     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
     .AddJsonFile("appsettings.json");
 
-IConfigurationRoot configuration = congifBuilder.Build();
+IConfigurationRoot configuration = configBuilder.Build();
 
 string pressureDeviationType = configuration["PressureDeviationType"] ?? "standard";
-
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<IValveControl, ValveControl>();
@@ -35,7 +33,6 @@ else
 {
     throw new InvalidOperationException($"Invalid value for environment variable 'PressureDeviationType'. Expected 'Standard' or 'Randomized', but got '{pressureDeviationType}'.");
 }
-
 
 builder.Services.AddSingleton<IReactor, Reactor>();
 builder.Services.AddSingleton<ReactorSystem>();
