@@ -2,5 +2,5 @@
 
 public class PressureResult
 {
-    public string Pressure { get; set; }
+    public required string Pressure { get; set; }
 }
