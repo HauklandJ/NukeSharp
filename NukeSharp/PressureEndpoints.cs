@@ -18,76 +18,85 @@ public static class PressureEndpoints
         var indexTemplate = Handlebars.Compile(File.ReadAllText("static/index.html"));
         var pressureTemplate = Handlebars.Compile(File.ReadAllText("static/pressure.handlebars"));
 
-        app.MapGet(
-            "/",
-            async (HttpContext context, ReactorSystem reactorSystem) =>
+        app.MapGet("/", Get(indexTemplate));
+
+        app.MapGet("/pressure", GetPressure(pressureTemplate));
+
+        app.MapGet("/gethistoricmeasurements", GetHistoric());
+
+        app.MapPost("/thresholds", SetThresholds());
+    }
+
+    private static Func<HttpContext, ReactorSystem, System.Threading.Tasks.Task> SetThresholds()
+    {
+        return async (context, reactorSystem) =>
+        {
+            if (
+                !float.TryParse(context.Request.Form["openAt"], out float openAt)
+                || !float.TryParse(context.Request.Form["closeAt"], out float closeAt)
+            )
             {
-                string result = indexTemplate(
-                    new { openAt = reactorSystem.MaxPressure, closeAt = reactorSystem.MinPressure }
-                );
-                context.Response.ContentType = "text/html";
-                await context.Response.WriteAsync(result);
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync("Invalid values");
+                return;
             }
-        );
 
-        app.MapGet(
-            "/pressure",
-            async (
-                HttpContext context,
-                IPressureSensor pressureSensor,
-                PressureHistory history,
-                ILogger<PressureHistory> logger
-            ) =>
+            if (openAt <= closeAt)
             {
-                float pressure = pressureSensor.GetValue();
-                history.Record(pressure);
-                logger.LogDebug(
-                    "GetValue at {time}. Current pressure: {pressure}",
-                    DateTime.UtcNow,
-                    pressure
-                );
-                context.Response.ContentType = "text/html";
-                await context.Response.WriteAsync(
-                    pressureTemplate(new PressureResult { Pressure = pressure.ToString() })
-                );
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync("Open threshold must be above close threshold");
+                return;
             }
-        );
 
-        app.MapGet(
-            "/gethistoricmeasurements",
-            async (HttpContext context, PressureHistory history) =>
-            {
-                context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync(JsonSerializer.Serialize(history.GetAll()));
-            }
-        );
+            reactorSystem.SetThresholds(openAt, closeAt);
+            await context.Response.WriteAsync("Updated");
+        };
+    }
 
-        app.MapPost(
-            "/thresholds",
-            async (HttpContext context, ReactorSystem reactorSystem) =>
-            {
-                if (
-                    !float.TryParse(context.Request.Form["openAt"], out float openAt)
-                    || !float.TryParse(context.Request.Form["closeAt"], out float closeAt)
-                )
-                {
-                    context.Response.StatusCode = 400;
-                    await context.Response.WriteAsync("Invalid values");
-                    return;
-                }
+    private static Func<HttpContext, PressureHistory, System.Threading.Tasks.Task> GetHistoric()
+    {
+        return static async (context, history) =>
+        {
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync(JsonSerializer.Serialize(history.GetAll()));
+        };
+    }
 
-                if (openAt <= closeAt)
-                {
-                    context.Response.StatusCode = 400;
-                    await context.Response.WriteAsync(
-                        "Open threshold must be above close threshold"
-                    );
-                    return;
-                }
+    private static Func<
+        HttpContext,
+        IPressureSensor,
+        PressureHistory,
+        ILogger<PressureHistory>,
+        System.Threading.Tasks.Task
+    > GetPressure(HandlebarsTemplate<object, object> pressureTemplate)
+    {
+        return async (context, pressureSensor, history, logger) =>
+        {
+            float pressure = pressureSensor.GetValue();
+            history.Record(pressure);
+            logger.LogDebug(
+                "GetValue at {time}. Current pressure: {pressure}",
+                DateTime.UtcNow,
+                pressure
+            );
+            context.Response.ContentType = "text/html";
+            await context.Response.WriteAsync(
+                pressureTemplate(new PressureResult { Pressure = pressure.ToString() })
+            );
+        };
+    }
 
-                reactorSystem.SetThresholds(openAt, closeAt);
-                await context.Response.WriteAsync("Updated");
-            }
-        );
+    private static Func<HttpContext, ReactorSystem, System.Threading.Tasks.Task> Get(
+        HandlebarsTemplate<object, object> indexTemplate
+    )
+    {
+        return async (context, reactorSystem) =>
+        {
+            string result = indexTemplate(
+                new { openAt = reactorSystem.MaxPressure, closeAt = reactorSystem.MinPressure }
+            );
+            context.Response.ContentType = "text/html";
+            await context.Response.WriteAsync(result);
+        };
     }
 }
