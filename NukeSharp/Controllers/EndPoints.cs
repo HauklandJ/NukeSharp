@@ -6,12 +6,17 @@ using System.Threading.Tasks;
 using HandlebarsDotNet;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using NukeSharp.ControlSystem;
 using NukeSharp.Models;
 using NukeSharp.Services;
 
 namespace NukeSharp.Controllers;
 
-public class EndPoints(IPressureSensor pressureSensor, ILogger<EndPoints> logger)
+public class EndPoints(
+    IPressureSensor pressureSensor,
+    ILogger<EndPoints> logger,
+    ReactorSystem reactorSystem
+)
 {
     private readonly HandlebarsTemplate<object, object> _indexTemplate = Handlebars.Compile(
         File.ReadAllText("static/index.html")
@@ -24,9 +29,34 @@ public class EndPoints(IPressureSensor pressureSensor, ILogger<EndPoints> logger
 
     public async Task GetIndex(HttpContext context)
     {
-        string result = _indexTemplate(null);
+        string result = _indexTemplate(
+            new { openAt = reactorSystem.MaxPressure, closeAt = reactorSystem.MinPressure }
+        );
         context.Response.ContentType = "text/html";
         await context.Response.WriteAsync(result);
+    }
+
+    public async Task UpdateThresholds(HttpContext context)
+    {
+        if (
+            !float.TryParse(context.Request.Form["openAt"], out float openAt)
+            || !float.TryParse(context.Request.Form["closeAt"], out float closeAt)
+        )
+        {
+            context.Response.StatusCode = 400;
+            await context.Response.WriteAsync("Invalid values");
+            return;
+        }
+
+        if (openAt <= closeAt)
+        {
+            context.Response.StatusCode = 400;
+            await context.Response.WriteAsync("Open threshold must be above close threshold");
+            return;
+        }
+
+        reactorSystem.SetThresholds(openAt, closeAt);
+        await context.Response.WriteAsync("Updated");
     }
 
     public async Task GetCurrentPressure(HttpContext context)
