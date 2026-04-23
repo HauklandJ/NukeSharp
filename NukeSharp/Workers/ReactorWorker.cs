@@ -7,41 +7,21 @@ using NukeSharp.Simulator;
 
 namespace NukeSharp.Workers;
 
-internal class ReactorWorker(IReactor reactor, ILogger<ReactorWorker> logger) : IHostedService
+internal class ReactorWorker(IReactor reactor, ILogger<ReactorWorker> logger) : BackgroundService
 {
-    private readonly CancellationTokenSource _shutdownTokenSource = new();
-    private Task _asyncReactor;
-
-    public Task StartAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        CancellationTokenSource linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
-            cancellationToken,
-            _shutdownTokenSource.Token
-        );
-
-        _asyncReactor = Task.Run(
-            () => reactor.Start(linkedTokenSource.Token),
-            linkedTokenSource.Token
-        );
-
-        return Task.CompletedTask;
-    }
-
-    public async Task StopAsync(CancellationToken cancellationToken)
-    {
-        _shutdownTokenSource.Cancel();
-
         try
         {
-            await _asyncReactor;
+            await reactor.Start(stoppingToken);
         }
-        catch (TaskCanceledException)
+        catch (OperationCanceledException)
         {
             logger.LogInformation("Reactor task was canceled.");
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An error occurred while stopping the reactor.");
+            logger.LogError(ex, "An error occurred in the reactor.");
         }
     }
 }
