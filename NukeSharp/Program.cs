@@ -3,7 +3,6 @@ using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.FileProviders;
 using NukeSharp.Controllers;
 using NukeSharp.ControlSystem;
@@ -40,14 +39,13 @@ else
 
 builder.Services.AddSingleton<IReactor, Reactor>();
 builder.Services.AddSingleton<ReactorSystem>();
+builder.Services.AddSingleton<EndPoints>();
 builder.Services.AddHostedService<ReactorWorker>();
 
 WebApplication app = builder.Build();
 app.Services.GetRequiredService<ReactorSystem>();
 
-IPressureSensor pressureSensor = app.Services.GetRequiredService<IPressureSensor>();
-ILogger<EndPoints> logger = app.Services.GetRequiredService<ILogger<EndPoints>>();
-EndPoints endpoints = new(pressureSensor, logger);
+EndPoints endpoints = app.Services.GetRequiredService<EndPoints>();
 
 app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "static")), RequestPath = "/static" });
 
