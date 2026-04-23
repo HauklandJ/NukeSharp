@@ -36,13 +36,13 @@ public class RandomizedPressureSensor : IPressureSensor
     {
         if (isValveOpen)
         {
-            Pressure *= 0.94f; // Reduserer trykket med 6%
+            Pressure *= 0.94f;
         }
         else
         {
             if (_random.NextDouble() > 0.95)
             {
-                Pressure *= 1.08f; // USTABILITET!!!!
+                Pressure *= 1.08f;
             }
             Pressure *= 1.03f;
         }

@@ -7,7 +7,7 @@ namespace NukeSharp.Services;
 
 public class PressureSensor : IPressureSensor
 {
-    public event Action<float> PressureChanged;
+    public event Action<float>? PressureChanged;
     private float _backingPressure = 0.3f;
     internal float Pressure
     {
@@ -29,7 +29,6 @@ public class PressureSensor : IPressureSensor
         }
     }
 
-    //private Random _random = new();
     public float GetValue()
     {
         return (float)Math.Round(Pressure, 3);
@@ -39,14 +38,10 @@ public class PressureSensor : IPressureSensor
     {
         if (isValveOpen)
         {
-            Pressure *= 0.94f; // Reduserer trykket med 6%
+            Pressure *= 0.94f;
         }
         else
         {
-            //if (_random.NextDouble() > 0.95)
-            //{
-            //    _pressure *= 1.08f;  // USTABILITET!!!!
-            //}
             Pressure *= 1.03f;
         }
         PressureChanged?.Invoke(Pressure);
