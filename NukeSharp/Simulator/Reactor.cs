@@ -11,7 +11,7 @@ public class Reactor(IPressureSensor sensor, IValveControl valve, ILogger<Reacto
     public async Task Start(CancellationToken cancellationToken)
     {
         logger.LogInformation("Started reactor");
-        while (!cancellationToken.IsCancellationRequested)
+        while (cancellationToken.IsCancellationRequested is false)
         {
             bool isOpen = valve.IsOpen();
             await Task.Delay(1000, cancellationToken);

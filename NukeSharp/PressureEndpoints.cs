@@ -32,8 +32,8 @@ public static class PressureEndpoints
         return async (context, reactorSystem) =>
         {
             if (
-                !float.TryParse(context.Request.Form["openAt"], out float openAt)
-                || !float.TryParse(context.Request.Form["closeAt"], out float closeAt)
+                float.TryParse(context.Request.Form["openAt"], out float openAt) is false
+                || float.TryParse(context.Request.Form["closeAt"], out float closeAt) is false
             )
             {
                 context.Response.StatusCode = 400;

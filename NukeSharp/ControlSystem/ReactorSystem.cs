@@ -37,7 +37,7 @@ public class ReactorSystem
     private void HandlePressureChange(float newPressure)
     {
         _logger.LogInformation("SYSTEM current value: {newPressure}", newPressure);
-        if (newPressure > MaxPressure && !_valveControl.IsOpen())
+        if (newPressure > MaxPressure && _valveControl.IsOpen() is false)
         {
             _valveControl.Open();
         }
