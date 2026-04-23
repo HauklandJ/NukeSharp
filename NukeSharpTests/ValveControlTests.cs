@@ -5,7 +5,6 @@ namespace NukeSharpTests
 {
     public class ValveControlTests
     {
-
         [Fact]
         public void Open_Is_Not_Instant()
         {
@@ -35,6 +34,5 @@ namespace NukeSharpTests
             await Task.Delay(2100); // Wait for more than 2 seconds
             Assert.False(valve.IsOpen()); // Should be closed now
         }
-
     }
 }

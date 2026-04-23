@@ -1,21 +1,24 @@
-﻿using HandlebarsDotNet;
-using System.Text.Json;
-using NukeSharp.Models;
-using NukeSharp.Services;
+﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
+using HandlebarsDotNet;
 using Microsoft.AspNetCore.Http;
-using System;
 using Microsoft.Extensions.Logging;
+using NukeSharp.Models;
+using NukeSharp.Services;
 
 namespace NukeSharp.Controllers;
 
 public class EndPoints(IPressureSensor pressureSensor, ILogger<EndPoints> logger)
 {
-    private readonly HandlebarsTemplate<object, object> _indexTemplate = Handlebars.Compile(File.ReadAllText("static/index.html"));
-    private readonly HandlebarsTemplate<object, object> _pressureTemplate = Handlebars.Compile(File.ReadAllText("static/pressure.handlebars"));
-
+    private readonly HandlebarsTemplate<object, object> _indexTemplate = Handlebars.Compile(
+        File.ReadAllText("static/index.html")
+    );
+    private readonly HandlebarsTemplate<object, object> _pressureTemplate = Handlebars.Compile(
+        File.ReadAllText("static/pressure.handlebars")
+    );
 
     private readonly ConcurrentQueue<float> _last100Readings = new();
 
@@ -34,7 +37,11 @@ public class EndPoints(IPressureSensor pressureSensor, ILogger<EndPoints> logger
         {
             _last100Readings.TryDequeue(out _);
         }
-        logger.LogDebug("GetValue from controller at {time}. Current pressure: {pressure}", time, pressure);
+        logger.LogDebug(
+            "GetValue from controller at {time}. Current pressure: {pressure}",
+            time,
+            pressure
+        );
         _last100Readings.Enqueue(pressure);
         PressureResult pressureResult = new() { Pressure = pressure.ToString() };
         context.Response.ContentType = "text/html";

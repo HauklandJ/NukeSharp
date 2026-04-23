@@ -5,7 +5,8 @@ using NukeSharp.Services;
 
 namespace NukeSharp.Simulator;
 
-public class Reactor(IPressureSensor sensor, IValveControl valve, ILogger<Reactor> logger) : IReactor
+public class Reactor(IPressureSensor sensor, IValveControl valve, ILogger<Reactor> logger)
+    : IReactor
 {
     public async Task Start(CancellationToken cancellationToken)
     {

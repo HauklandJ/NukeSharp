@@ -12,7 +12,11 @@ public class ReactorSystem
     private readonly float MAX_PRESSURE = 0.71f;
     private readonly float MIN_PRESSURE = 0.57f;
 
-    public ReactorSystem(IValveControl valveControl, IPressureSensor pressureSensor, ILogger<ReactorSystem> logger)
+    public ReactorSystem(
+        IValveControl valveControl,
+        IPressureSensor pressureSensor,
+        ILogger<ReactorSystem> logger
+    )
     {
         _valveControl = valveControl;
         _pressureSensor = pressureSensor;
@@ -33,5 +37,4 @@ public class ReactorSystem
             _valveControl.Close();
         }
     }
-
 }

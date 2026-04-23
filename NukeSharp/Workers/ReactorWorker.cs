@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using NukeSharp.Simulator;
 
 namespace NukeSharp.Workers;
+
 internal class ReactorWorker(IReactor reactor, ILogger<ReactorWorker> logger) : IHostedService
 {
     private readonly CancellationTokenSource _shutdownTokenSource = new();
@@ -13,9 +14,15 @@ internal class ReactorWorker(IReactor reactor, ILogger<ReactorWorker> logger) : 
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        CancellationTokenSource linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _shutdownTokenSource.Token);
+        CancellationTokenSource linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
+            cancellationToken,
+            _shutdownTokenSource.Token
+        );
 
-        _asyncReactor = Task.Run(() => reactor.Start(linkedTokenSource.Token), linkedTokenSource.Token);
+        _asyncReactor = Task.Run(
+            () => reactor.Start(linkedTokenSource.Token),
+            linkedTokenSource.Token
+        );
 
         return Task.CompletedTask;
     }
@@ -37,5 +44,4 @@ internal class ReactorWorker(IReactor reactor, ILogger<ReactorWorker> logger) : 
             logger.LogError(ex, "An error occurred while stopping the reactor.");
         }
     }
-
 }

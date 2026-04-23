@@ -31,7 +31,10 @@ public class ValveControl : IValveControl
             }
             catch
             {
-                lock (_lockObject) { _isLocked = false; }
+                lock (_lockObject)
+                {
+                    _isLocked = false;
+                }
             }
         });
     }
@@ -59,7 +62,10 @@ public class ValveControl : IValveControl
             }
             catch
             {
-                lock (_lockObject) { _isLocked = false; }
+                lock (_lockObject)
+                {
+                    _isLocked = false;
+                }
             }
         });
     }

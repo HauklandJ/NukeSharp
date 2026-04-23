@@ -1,6 +1,5 @@
 ﻿using NukeSharp.Services;
 
-
 namespace NukeSharp.Tests;
 
 public class PressureSensorTests
@@ -52,10 +51,7 @@ public class PressureSensorTests
     [Fact]
     public void Pressure_SetValueAboveOne_ValueIsCappedToOne()
     {
-        PressureSensor pressureSensor = new()
-        {
-            Pressure = 1.5f
-        };
+        PressureSensor pressureSensor = new() { Pressure = 1.5f };
 
         Assert.Equal(1f, pressureSensor.Pressure);
     }
