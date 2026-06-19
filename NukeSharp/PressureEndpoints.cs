@@ -25,6 +25,28 @@ public static class PressureEndpoints
         app.MapGet("/gethistoricmeasurements", GetHistoric());
 
         app.MapPost("/thresholds", SetThresholds());
+
+        app.MapPost("/emergency/open", EmergencyOpen());
+
+        app.MapPost("/emergency/restart", EmergencyRestart());
+    }
+
+    private static Func<HttpContext, ReactorSystem, System.Threading.Tasks.Task> EmergencyOpen()
+    {
+        return async (context, reactorSystem) =>
+        {
+            reactorSystem.TriggerEmergencyOpen();
+            await context.Response.WriteAsync("Emergency open triggered");
+        };
+    }
+
+    private static Func<HttpContext, ReactorSystem, System.Threading.Tasks.Task> EmergencyRestart()
+    {
+        return async (context, reactorSystem) =>
+        {
+            reactorSystem.RestartAutomation();
+            await context.Response.WriteAsync("Automation restarted");
+        };
     }
 
     private static Func<HttpContext, ReactorSystem, System.Threading.Tasks.Task> SetThresholds()
@@ -93,7 +115,12 @@ public static class PressureEndpoints
         return async (context, reactorSystem) =>
         {
             string result = indexTemplate(
-                new { openAt = reactorSystem.MaxPressure, closeAt = reactorSystem.MinPressure }
+                new
+                {
+                    openAt = reactorSystem.MaxPressure,
+                    closeAt = reactorSystem.MinPressure,
+                    automationEnabled = reactorSystem.AutomationEnabled,
+                }
             );
             context.Response.ContentType = "text/html";
             await context.Response.WriteAsync(result);

@@ -8,11 +8,19 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.0.2/chartjs-plugin-annotation.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        #emergencyBtn.idle { background-color: #c0392b; border-color: #c0392b; }
+        #emergencyBtn.armed { background-color: #e67e22; border-color: #e67e22; }
+        #emergencyBtn.triggered { background-color: #7f8c8d; border-color: #7f8c8d; }
+    </style>
 </head>
 <body>
 
     <div class="container" style="padding-top:20px">
         <div hx-get="/pressure" hx-trigger="every 1s, load" hx-swap="innerHTML"></div>
+    </div>
+    <div class="container">
+        <button id="emergencyBtn" type="button" onclick="onEmergencyClick()"></button>
     </div>
     <div style="padding-left:80px; padding-right:80px">
         <canvas id="pressureChart" width="200" height="100"></canvas>
@@ -40,6 +48,36 @@
     </div>
 
     <script>
+        const emergencyBtn = document.getElementById('emergencyBtn');
+        let emergencyState = {{#if automationEnabled}}'idle'{{else}}'triggered'{{/if}};
+
+        function renderEmergencyButton() {
+            emergencyBtn.classList.remove('idle', 'armed', 'triggered');
+            emergencyBtn.classList.add(emergencyState);
+            if (emergencyState === 'idle') {
+                emergencyBtn.textContent = '🚨 Emergency Open Valves';
+            } else if (emergencyState === 'armed') {
+                emergencyBtn.textContent = 'Click again to confirm';
+            } else {
+                emergencyBtn.textContent = '🔄 Restart Automation';
+            }
+        }
+
+        async function onEmergencyClick() {
+            if (emergencyState === 'idle') {
+                emergencyState = 'armed';
+            } else if (emergencyState === 'armed') {
+                await fetch('/emergency/open', { method: 'POST' });
+                emergencyState = 'triggered';
+            } else {
+                await fetch('/emergency/restart', { method: 'POST' });
+                emergencyState = 'idle';
+            }
+            renderEmergencyButton();
+        }
+
+        renderEmergencyButton();
+
         const ctx = document.getElementById('pressureChart').getContext('2d');
         let pressureData = [];
 
