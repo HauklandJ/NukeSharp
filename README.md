@@ -17,3 +17,7 @@ dotnet csharpier format .
 ```
 
 **Format on save in VS Code:** install the [CSharpier extension](https://marketplace.visualstudio.com/items?itemName=csharpier.csharpier-vscode) — the workspace is already configured to format on save.
+
+## GitHub MCP Server
+
+This repo includes a `.mcp.json` for Claude Code's GitHub MCP integration. Set a `GITHUB_PERSONAL_ACCESS_TOKEN` env var with a PAT before use.
