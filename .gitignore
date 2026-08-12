@@ -49,3 +49,6 @@ src/Api/data/
 /src/xmlfiles
 
 .mono
+
+# Claude Code audit log
+.claude/audit.log

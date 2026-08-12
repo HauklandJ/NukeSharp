@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "-e",
+              "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const j=JSON.parse(d);const entry={timestamp:new Date().toISOString(),tool_name:j.tool_name,tool_input:j.tool_input};require('fs').appendFileSync('.claude/audit.log',JSON.stringify(entry)+'\\n');}catch(e){}});"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
